@@ -118,9 +118,9 @@ class CardController{
           const card = await cardService.delete(idCard);
       
           if (card) {
-            res.status(200).json({ 'msg': 'Card deleted successfully!' });
+            res.status(200).json({ 'msg': 'Xoá thành công card muốn xoá!' });
           } else {
-            throw new Error('Fail');
+            throw new Error('Thất bại');
           }
         } catch (error) {
           throw error;

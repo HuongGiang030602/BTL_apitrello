@@ -84,15 +84,21 @@ class ListController{
         try {
             const { idList } = req.params;
       
-            const list = await listService.delete(idList);
-            console.log(list);
-            if(list) {
-                res.status(200).json({
-                    'msg': 'Xoá thành công'
-                })
+            const result = await listService.delete(idList)
+            if(result == true) {
+                const deleteCard = await listService.deleteCard(idList);
+                if(deleteCard == true) {
+                    res.status(200).json({
+                        'msg': 'Xoá thành công !'
+                    })
+                } else {
+                    res.status(404).json({
+                        'msg': 'Lỗi khi xoá tất cả các card'
+                    })
+                }
             }else {
                 res.status(404).json({
-                    'msg': 'Không tìm thấy thông tin cần xoá'
+                    'msg': 'Không tìm thấy idList'
                 })
             }
         } catch (error) {

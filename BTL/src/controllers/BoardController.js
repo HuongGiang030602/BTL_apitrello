@@ -6,7 +6,6 @@ class BoardController{
             const { title, cover } = req.body;
             
             if (req.file) {
-                console.log('Tạo Board thành công!');
             } else {
                 throw new Error('Chỉ hỗ trợ định dạng jpg và png');
             }
@@ -45,7 +44,6 @@ class BoardController{
             
             const { title, cover } = req.body;
         
-            // Tạo object mới chứa thông tin cập nhật
             let data = {
                 title,
                 cover: req.file ? req.file.path : cover,
@@ -70,12 +68,30 @@ class BoardController{
           const boardDelete = await boardService.delete(id);
       
           if (boardDelete) {
-            res.status(200).json({ 'msg': 'Xoá thành công Board!',board: boardDelete });
+            const deleteList = await boardService.deleteList(id);
+            if(deleteList) {
+                const deleteCard = await boardService.deleteCard(deleteList);
+                if (deleteCard) { 
+                    res.status(200).json({
+                        'msg': 'Xoá thành công'
+                    })
+                } else {
+                    res.status(404).json({
+                        'msg': 'Lỗi khi xoá tất cả các card'
+                    })
+                }
+            } else {
+                res.status(404).json({
+                    'msg': 'Lỗi khi xoá'
+                })
+            }
           } else {
-            throw new Error('Thất bại !');
+            res.status(404).json({
+                'msg': 'Not found'
+            })
           }
         } catch (error) {
-          throw error;
+          next (error);
         }
     };
 }

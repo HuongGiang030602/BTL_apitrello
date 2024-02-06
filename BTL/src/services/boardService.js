@@ -1,4 +1,7 @@
 const Board = require("../models/Board");
+const List = require("../models/List")
+const Card = require("../models/Card")
+
 
 class BoardService{
 
@@ -43,13 +46,38 @@ class BoardService{
         }
     }
 
+    deleteCard = async (deleteListObjects) => {
+        try  {
+            const deleteLists = deleteListObjects.map(lists => lists._id);    
+            const result = await Card.deleteMany({ idList: { $in: deleteLists } });
+            return true;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+
+    deleteList = async (id) => {
+        try  {
+            const result = await List.find({ idBoard: id });
+            const deleted = await List.deleteMany({ idBoard: id });
+            return result;
+        } catch (error) {
+            throw error;
+        }
+    }
+
     delete = async(id) => {
         try {
-            //Xử lý các nghiệp vụ liên quan
-            const board = await Board.findById(id);
-            console.log(board);
-            await board.deleteOne();
-            return true;
+            const checkBoard = await Board.findOne({_id: id});
+            if (checkBoard) {
+                const board = await Board.findById(id);
+                // console.log(board);  
+                await board.deleteOne();
+                return true;
+            } else { 
+                return false;
+            }
         } catch (error) {
             throw error;
         }

@@ -1,5 +1,6 @@
 const List = require("../models/List");
 const Board = require("../models/Board");
+const Card = require("../models/Card");
 
 class ListService{
 
@@ -63,6 +64,17 @@ class ListService{
            return true;
         } catch (error) {
             throw new Error('Không tồn tại List này');          
+        }
+    }
+
+
+    
+    deleteCard = async (idList) => {
+        try  {
+            const result = await Card.deleteMany({ idList: idList });
+            return true;
+        } catch (error) {
+            throw error;
         }
     }
 
