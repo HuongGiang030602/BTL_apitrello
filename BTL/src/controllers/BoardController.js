@@ -63,33 +63,24 @@ class BoardController{
 
     delete = async (req, res, next) => {
         try {
-          const { id } = req.params;
-      
-          const boardDelete = await boardService.delete(id);
-      
-          if (boardDelete) {
-            const deleteList = await boardService.deleteList(id);
-            if(deleteList) {
-                const deleteCard = await boardService.deleteCard(deleteList);
-                if (deleteCard) { 
-                    res.status(200).json({
-                        'msg': 'Xoá thành công'
-                    })
-                } else {
-                    res.status(404).json({
-                        'msg': 'Lỗi khi xoá tất cả các card'
-                    })
-                }
-            } else {
-                res.status(404).json({
-                    'msg': 'Lỗi khi xoá'
-                })
+            const { id } = req.params;
+
+            const result = await boardService.delete(id);
+            if (!result) {
+              return res.status(404).json({ 'msg': 'BoardId not found' });
             }
-          } else {
-            res.status(404).json({
-                'msg': 'Not found'
-            })
-          }
+        
+            const deleteList = await boardService.deleteList(id);
+            if (!deleteList) {
+              return res.status(404).json({ 'msg': 'Đã xảy ra lỗi khi xoá' });
+            }
+        
+            const deleteCard = await boardService.deleteCard(deleteList);
+            if (!deleteCard) {
+              return res.status(404).json({ 'msg': 'Đã xyả ra lỗi khi xoá tất cả các Card' });
+            }
+        
+            res.status(200).json({ 'msg': 'Xoá thành công' });
         } catch (error) {
           next (error);
         }
